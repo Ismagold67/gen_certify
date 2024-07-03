@@ -1,0 +1,58 @@
+* {
+    padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    flex-direction: column;
+    background: linear-gradient(90deg, rgba(45,88,145,1) 9%, rgba(8,0,138,1) 48%, rgba(37,37,37,1) 100%);
+}
+
+form {
+    width: 300px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #00214D;
+    padding: 15px;
+    border-radius: 15px;
+    border: 1.5px solid #fff;
+    box-shadow: 3px 2px 35px black;
+}
+h1 {
+    color: azure;
+}
+
+form input {
+    outline: none;
+    background-color: transparent;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 1px solid #fff;
+    caret-color: #fff;
+    padding: 3px;
+    color: #fff;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(1) brightness(100%) saturate(0);
+}  
+
+form::placeholder {
+    color: #fff;
+}
+
+form label {
+    font-size: 12px;
+    font-weight: bold;
+    color: beige;
+}

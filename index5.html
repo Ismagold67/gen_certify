@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Imprimir Dados do Formulário em PDF</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.2/jspdf.debug.js" integrity="sha512-rAzZtAD9aZXKAjivLBjA5+bNjWjTtGVa62S3YFxWNikNkyMcFHxRD3RK7aLYhM0sPoAuV5OaFgF0Wc8TN/R9VQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+
+  <h1>Formulário para Certificado</h1><br>
+
+  <form id="formContato">
+    <label for="nome">Nome Aluno(a):</label>
+    <input type="text" id="nome" name="nome" required>
+
+    <label for="universidade">Universidade/Faculdade:</label>
+    <input type="text" id="universidade" name="universidade" required>
+
+    <label for="curso">Curso:</label>
+    <input type="text" id="curso" name="curso" required>
+
+    <label for="dataInicio">Data de Início:</label>
+    <input type="date" id="dataInicio" name="dataInicio" required>
+
+    <label for="dataFim">Data de Fim:</label>
+    <input type="date" id="dataFim" name="dataFim" required>
+
+    <label for="imagemFundo">Carregar Imagem de Fundo:</label>
+    <input type="file" id="imagemFundo" name="imagemFundo" accept="image/*">
+
+    <button type="button" onclick="gerarPDF()">Gerar PDF</button>
+  </form>
+
+  <script>
+    function gerarPDF() {
+      var nome = document.getElementById('nome').value;
+      var imagemFundo = document.getElementById('imagemFundo').files[0];
+      var curso = document.getElementById('curso').value;
+      var dataInicio = document.getElementById('dataInicio').value;
+      var dataFim = document.getElementById('dataFim').value;
+      var universidade = document.getElementById('universidade').value;
+
+      var doc = new jsPDF('landscape');
+      var pageWidth = doc.internal.pageSize.getWidth();
+      var pageHeight = doc.internal.pageSize.getHeight();
+
+      if (imagemFundo) {
+        var reader = new FileReader();
+        reader.onload = function(event) {
+          var imgFundoData = event.target.result;
+          doc.addImage(imgFundoData, 'JPEG', 0, 0, pageWidth, pageHeight);
+
+          adicionarTexto(doc, pageWidth, nome, universidade, curso, dataInicio, dataFim);
+
+          doc.save('formulario.pdf');
+        };
+        reader.readAsDataURL(imagemFundo);
+      } else {
+        adicionarTexto(doc, pageWidth, nome, mensagem);
+
+        doc.save(`cert_${curso}.pdf`);
+      }
+    }
+
+    function formatarData(data) {
+        var partes = data.split('-');
+        var ano = partes[0];
+        var mes = partes[1];
+        var dia = partes[2];
+        return dia + '/' + mes + '/' + ano;
+    }
+
+    function adicionarTexto(doc, pageWidth, nome, universidade, curso, dataInicio, dataFim) {
+      var titulo = 'CERTIFICADO DE CONCLUSÃO';
+      var nomeTexto = `${nome}`;
+      var comprova = 'ESTE CERTIFICADO COMPROVA QUE';
+      var mensagemTexto = `concluiu com êxito o curso de ${curso} oferecido pelo ${universidade}, no período compreendido entre ${formatarData(dataInicio)} e ${formatarData(dataFim)}. Durante sua participação no curso, demonstrou um notável comprometimento e dedicação, destacando-se pelo empenho exemplar em todas as atividades propostas.`;
+
+      doc.setFontSize(30);
+      doc.setTextColor('#00214D')
+      doc.setFontStyle('bold');
+      centralizarTexto(doc, titulo, 40, pageWidth);
+
+      doc.setFontSize(18);
+      doc.setTextColor('#00214D')
+      doc.setFontStyle('normal');
+      centralizarTexto(doc, comprova, 60, pageWidth);
+
+      doc.setFontSize(40);
+      doc.setTextColor('#00214D')
+      doc.setFontStyle('italic');
+      centralizarTexto(doc, nomeTexto, 85, pageWidth);
+
+      doc.setFontStyle('normal');
+      doc.setTextColor('#00214D')
+      doc.setFontSize(18);
+      var linhasMensagem = doc.splitTextToSize(mensagemTexto, pageWidth - 60); // Ajusta o texto para quebrar em várias linhas, se necessário
+      for (var i = 0; i < linhasMensagem.length; i++) {
+        centralizarTexto(doc, linhasMensagem[i], 110 + (i * 10), pageWidth);
+      }
+    }
+
+    function centralizarTexto(doc, texto, y, pageWidth) {
+      var textoWidth = doc.getStringUnitWidth(texto) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+      var textoX = (pageWidth - textoWidth) / 2;
+      doc.text(texto, textoX, y);
+    }
+  </script>
+
+</body>
+</html>
